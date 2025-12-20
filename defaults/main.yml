@@ -1,0 +1,16 @@
+# Default values - can be overridden by inventory variables
+# These are FALLBACK values - if inventory doesn't define them, use these.
+
+# Application Settings
+app_name: 'tshirt-customizer'
+app_repo: ""
+app_branch: 'main'
+
+# Build Settings
+node_version: '22'
+build_dir: 'client'
+dist_folder: 'client/dist'
+
+# Deployment Settings
+deployment_method: 'localhost'
+workspace_path: '/tmp/ansible-deploy'
