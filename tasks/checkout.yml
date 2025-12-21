@@ -1,0 +1,23 @@
+---
+- name: Ensure workspace directory exists
+  file:
+      path: "{{ workspace_path }}"
+      state: directory
+      mode: "0755"
+
+- name: Clone the app repo from github
+  git:
+      repo: "{{ app_repo }}"
+      dest: "{{ workspace_path }}/{{ app_name }}"
+      version: "{{ app_branch }}"
+      force: yes
+  register: git_results
+
+- name: Fail if clone failed
+  fail:
+      msg: "Git clone failed"
+  when: git_results.failed
+
+- name: Display git checkout status
+  debug:
+      msg: "Successfully cloned {{ app_repo}} (Branch: {{ app_branch }})"

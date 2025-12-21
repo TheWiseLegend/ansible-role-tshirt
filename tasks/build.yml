@@ -1,0 +1,33 @@
+---
+# Build the React frontend application
+# This runs npm install and npm run build
+
+- name: Install Node.js dependencies
+  command: npm install
+  args:
+      chdir: "{{ workspace_path }}/{{ app_name }}/{{ build_dir }}"
+  register: npm_install_result
+
+- name: Display npm install status
+  debug:
+      msg: "Dependencies installed successfully"
+
+- name: Build production bundle
+  command: npm run build
+  args:
+      chdir: "{{ workspace_path }}/{{ app_name }}/{{ build_dir }}"
+  register: npm_build_result
+
+- name: Display build status
+  debug:
+      msg: "Build completed successfully"
+
+- name: Verify dist folder was created
+  stat:
+      path: "{{ workspace_path }}/{{ app_name }}/{{ dist_folder }}"
+  register: dist_check
+
+- name: Fail if build didn't create dist folder
+  fail:
+      msg: "Build failed - dist folder not found at {{ workspace_path }}/{{ app_name }}/{{ dist_folder }}"
+  when: not dist_check.stat.exists

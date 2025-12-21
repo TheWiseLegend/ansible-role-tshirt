@@ -1,0 +1,30 @@
+---
+# Deploy built files to Hostinger via SFTP
+# Uses lftp to mirror the dist folder to the remote server
+
+- name: Check if lftp is installed
+  command: which lftp
+  register: lftp_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Install lftp if missing
+  command: "brew install lftp"
+  when: lftp_check.rc != 0
+  register: brew_install
+  ignore_errors: true
+
+- name: Deploy to Hostinger via SFTP
+  shell: |
+      lftp -e "
+        set sftp:auto-confirm yes;
+        set ssl:verify-certificate no;
+        open -u {{ sftp_username }},{{ sftp_password }} -p {{ sftp_port }} sftp://{{ sftp_host }};
+        mirror -R --verbose {{ workspace_path }}/{{ app_name }}/{{ dist_folder }} {{ deploy_path }};
+        bye
+      "
+  register: sftp_result
+
+- name: Display deployment status
+  debug:
+      msg: "Successfully deployed to {{ sftp_host }}:{{ deploy_path }}"

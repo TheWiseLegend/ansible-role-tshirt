@@ -1,0 +1,17 @@
+---
+# Entry point for the tshirt deployment role
+# This file orchestrates the deployment in 3 steps:
+# 1. Checkout code from GitHub
+# 2. Build the frontend
+# 3. Deploy to Hostinger via SFTP or local as a default behavior
+
+- name: Checkout the code from github
+  include_tasks: checkout.yml
+
+- name: Build the frontend
+  include_tasks: build.yml
+
+- name: Deploy Project
+  include_tasks: deploy.yml
+  when: deployment_method == 'sftp'
+
